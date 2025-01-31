@@ -44,6 +44,7 @@ import { c } from "castium";
 console.log(c("42").number().get()); // 42
 console.log(c(1).boolean().get()); // true
 console.log(c("2025-01-30").date().isoDate().get()); // "2025-01-30T00:00:00.000Z"
+console.log(c("2025-01-30").dateTime().get()); // 1738195200000
 console.log(c("").nullable().default("No data").get()); // "No data"
 ```
 
