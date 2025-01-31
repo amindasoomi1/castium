@@ -48,6 +48,13 @@ class Castium<T> {
     return dateCaster;
   }
 
+  dateTime(): Castium<number | null> {
+    const dateCaster = this.date();
+    return dateCaster.get()
+      ? new Castium(dateCaster.get()!.getTime())
+      : new Castium(null);
+  }
+
   array(): Castium<any[] | null> {
     try {
       const parsed = Array.isArray(this.value)

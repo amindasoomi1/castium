@@ -67,6 +67,10 @@ Here are the available methods in Castium for transforming data:
 
 - Converts the value to a JavaScript Date object.
 
+### `.dateTime()`
+
+- Converts the value to a date time (number).
+
 ### `.isoDate()`
 
 - Converts the value to an ISO string representation of the date.
