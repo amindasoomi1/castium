@@ -13,7 +13,7 @@ class Castium<T> {
   }
 
   string(): Castium<string> {
-    return new Castium(String(this.value));
+    return new Castium(String(this.value ?? ""));
   }
 
   boolean(): Castium<boolean> {
