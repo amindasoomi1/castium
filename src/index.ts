@@ -24,29 +24,31 @@ class Castium<T> {
   }
 
   equal(expected: T): Castium<boolean> {
-    this.value = (this.value === expected) as any;
-    return this as any;
+    return new Castium(this.value === expected);
+  }
+
+  isEqual(expected: T): Castium<boolean> {
+    return new Castium(this.value === expected);
   }
 
   booleanString(): Castium<boolean | null> {
-    if (this.value === "true") return new Castium(true);
-    if (this.value === "false") return new Castium(false);
+    const str = String(this.value).toLowerCase();
+    if (str === "true") return new Castium(true);
+    if (str === "false") return new Castium(false);
     return new Castium(null);
   }
 
   date(): Castium<Date | null> {
-    const isEmpty =
-      this.value === "" || this.value === null || this.value === undefined;
-    if (isEmpty) return new Castium(null);
+    if (this.value === "" || this.value === null || this.value === undefined)
+      return new Castium(null);
+
     const parsedDate = new Date(this.value as any);
     return new Castium(isNaN(parsedDate.getTime()) ? null : parsedDate);
   }
 
   isoDate(): Castium<string | null> {
-    const dateCaster = this.date();
-    return dateCaster.get()
-      ? new Castium(dateCaster.get()!.toISOString())
-      : new Castium(null);
+    const dateValue = this.date().get();
+    return dateValue ? new Castium(dateValue.toISOString()) : new Castium(null);
   }
 
   fromDate(): Castium<Date | null> {
