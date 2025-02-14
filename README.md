@@ -23,7 +23,7 @@ Import **Castium** and use it to safely convert values:
 ```typescript
 import { c } from "castium";
 
-const result = c("123").number().get(); // 123
+const result = c("0  ").string().number().boolean().get(); // false
 ```
 
 ## Features
