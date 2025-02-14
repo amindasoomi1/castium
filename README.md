@@ -1,113 +1,132 @@
 # Castium
 
-🚀 **Castium** is the simplest way to transform data types in JavaScript!
-
-After a lot of hard work, Castium has finally been released! 🎉
-
-A small, practical, and chainable tool for transforming data types in JavaScript and Node.js.
-
-🔗 [Castium on NPM](https://lnkd.in/dGnSvCCs)
-
-## Features
-
-Castium provides an easy way to convert values into different types such as:
-
-- Convert a value to a number, string, or boolean.
-- Convert dates into standard formats.
-- Work with arrays and objects.
-- Set default values for `null` or `undefined`.
-- And many other capabilities!
-
-## Key Features
-
-- ✅ Convert to **Number**, **String**, **Boolean** → `.number()`, `.string()`, `.boolean()`
-- ✅ Work with **Dates** → `.date()`, `.isoDate()`, `.fromDate()`, `.toDate()`
-- ✅ Convert to **Array** and **Object** → `.array()`, `.object()`
-- ✅ Set **Default Values** and handle **Nullability** → `.default()`, `.nullable()`
-- ✅ Use **Custom Transformation Functions** → `.transform(fn)`
+**Castium** is a lightweight, chainable TypeScript/JavaScript utility for safely converting and transforming data types.
 
 ## Installation
 
-To install Castium, use npm:
+You can install **Castium** using npm:
 
-```bash
+```sh
 npm install castium
+```
+
+Or using yarn:
+
+```sh
+yarn add castium
 ```
 
 ## Usage
 
-Once installed, you can easily use Castium to transform data:
+Import **Castium** and use it to safely convert values:
 
-```javascript
+```typescript
 import { c } from "castium";
 
-console.log(c("42").number().get()); // 42
-console.log(c(1).boolean().get()); // true
-console.log(c("2025-01-30").date().isoDate().get()); // "2025-01-30T00:00:00.000Z"
-console.log(c("2025-01-30").dateTime().get()); // 1738195200000
-console.log(c("").nullable().default("No data").get()); // "No data"
+const result = c("123").number().get(); // 123
 ```
 
-## Methods
+## Features
 
-Here are the available methods in Castium for transforming data:
+### Convert to Number
 
-### `.number()`
-
-- Converts the value to a number.
-
-### `.string()`
-
-- Converts the value to a string.
-
-### `.boolean()`
-
-- Converts the value to a boolean.
-
-### `.date()`
-
-- Converts the value to a JavaScript Date object.
-
-### `.dateTime()`
-
-- Converts the value to a date time (number).
-
-### `.isoDate()`
-
-- Converts the value to an ISO string representation of the date.
-
-### `.fromDate()`
-
-- Converts a JavaScript Date object into a formatted string.
-
-### `.toDate()`
-
-- Converts the value to a Date object.
-
-### `.array()`
-
-- Converts the value to an array.
-
-### `.object()`
-
-- Converts the value to an object.
-
-### `.nullable()`
-
-- Allows the value to be `null`.
-
-### `.default(value)`
-
-- Sets a default value if the value is `null` or `undefined`.
-
-### `.transform(fn)`
-
-- Allows custom transformations using a function.
-
-### Example Usage:
-
-```javascript
-const result = c("42").number().boolean().get();
-
-console.log(result); // true
+```typescript
+c("42").number().get(); // 42
+c("invalid").number().get(); // null
+c(null).number(0).get(); // 0 (default value)
 ```
+
+### Convert to String
+
+```typescript
+c(123).string().get(); // "123"
+c(null).string().get(); // ""
+```
+
+### Convert to Boolean
+
+```typescript
+c(1).boolean().get(); // true
+c(0).boolean().get(); // false
+```
+
+### Convert Boolean Strings
+
+```typescript
+c("true").booleanString().get(); // true
+c("false").booleanString().get(); // false
+c("random").booleanString().get(); // null
+```
+
+### Convert to Date
+
+```typescript
+c("2023-01-01").date().get(); // Date object
+c("invalid").date().get(); // null
+```
+
+### Convert to ISO Date String
+
+```typescript
+c("2023-01-01").isoDate().get(); // "2023-01-01T00:00:00.000Z"
+```
+
+### Convert to Start/End of Day
+
+```typescript
+c("2023-01-01").fromDate().get(); // 2023-01-01T00:00:00.000Z
+c("2023-01-01").toDate().get(); // 2023-01-01T23:59:59.999Z
+```
+
+### Convert to Date Timestamp
+
+```typescript
+c("2023-01-01").dateTime().get(); // 1672444800000
+```
+
+### Convert to Array
+
+```typescript
+c("[1,2,3]").array().get(); // [1, 2, 3]
+c("invalid").array().get(); // null
+```
+
+### Convert to Object
+
+```typescript
+c('{"key": "value"}').object().get(); // { key: "value" }
+c("invalid").object().get(); // null
+```
+
+### Handle Null or Undefined Values
+
+```typescript
+c(null).nullable().get(); // null
+c(null).undefined().get(); // undefined
+c(null).default("fallback").get(); // "fallback"
+```
+
+### Transform Value with a Custom Function
+
+```typescript
+c(2)
+  .transform((x) => x * 2)
+  .get(); // 4
+```
+
+### Compare Values
+
+```typescript
+c(10).equal(10).get(); // true
+c("hello").equal("world").get(); // false
+```
+
+## Repository
+
+Find the full source code and contribute on GitHub:
+
+[GitHub Repository](https://github.com/amindasoomi1/castium)
+
+## License
+
+**MIT License**

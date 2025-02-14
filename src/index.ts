@@ -6,6 +6,9 @@ class Castium<T> {
   }
 
   number<D extends number | null>(defaultValue?: D): Castium<number | D> {
+    const isEmpty =
+      this.value === "" || this.value === null || this.value === undefined;
+    if (isEmpty) return new Castium(defaultValue ?? (null as D));
     const newValue = Number(this.value);
     return new Castium(
       isNaN(newValue) ? defaultValue ?? (null as D) : newValue
@@ -20,7 +23,21 @@ class Castium<T> {
     return new Castium(Boolean(this.value));
   }
 
+  equal(expected: T): Castium<boolean> {
+    this.value = (this.value === expected) as any;
+    return this as any;
+  }
+
+  booleanString(): Castium<boolean | null> {
+    if (this.value === "true") return new Castium(true);
+    if (this.value === "false") return new Castium(false);
+    return new Castium(null);
+  }
+
   date(): Castium<Date | null> {
+    const isEmpty =
+      this.value === "" || this.value === null || this.value === undefined;
+    if (isEmpty) return new Castium(null);
     const parsedDate = new Date(this.value as any);
     return new Castium(isNaN(parsedDate.getTime()) ? null : parsedDate);
   }
