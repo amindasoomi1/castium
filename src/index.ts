@@ -41,7 +41,6 @@ class Castium<T> {
   date(): Castium<Date | null> {
     if (this.value === "" || this.value === null || this.value === undefined)
       return new Castium(null);
-
     const parsedDate = new Date(this.value as any);
     return new Castium(isNaN(parsedDate.getTime()) ? null : parsedDate);
   }
