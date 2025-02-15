@@ -46,7 +46,6 @@ c("text").number(0).get(); // 0 (default value provided)
 c("  ٥٠٠٠  ").number().get(); // 5000
 c("۴۲.۵۶").number().get(); // 42.56
 c("12.34.56").number().get(); // null (default value provided)
-c("۳٫۱۴۱۵۹").number().get(); // 3.14159
 ```
 
 ---
