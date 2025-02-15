@@ -110,9 +110,7 @@ class Castium<T> {
 
   nullable(): Castium<T | null> {
     return new Castium(
-      this.value === "" || this.value === null || this.value === undefined
-        ? null
-        : this.value
+      this.value === "" || this.value === undefined ? null : this.value
     );
   }
 
@@ -123,11 +121,8 @@ class Castium<T> {
   }
 
   default<U>(defaultValue: U): Castium<T | U> {
-    return new Castium(
-      this.value === "" || this.value === null || this.value === undefined
-        ? defaultValue
-        : this.value
-    );
+    const value = this.nullable().get();
+    return new Castium(value === null ? defaultValue : this.value);
   }
 
   transform<U>(fn: (value: T) => U, defaultValue?: U): Castium<U | null> {
