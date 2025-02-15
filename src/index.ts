@@ -6,10 +6,14 @@ class Castium<T> {
   }
 
   number<D extends number | null>(defaultValue?: D): Castium<number | D> {
-    const isEmpty =
-      this.value === "" || this.value === null || this.value === undefined;
-    if (isEmpty) return new Castium(defaultValue ?? (null as D));
-    const newValue = Number(this.value);
+    let strValue = this.string().get();
+    strValue = strValue
+      .replace(/[٠١٢٣٤٥٦٧٨٩]/g, (d) => String(d.charCodeAt(0) - 1632))
+      .replace(/[۰۱۲۳۴۵۶۷۸۹]/g, (d) => String(d.charCodeAt(0) - 1776));
+    strValue = strValue.replace(/[^0-9.]/g, "");
+    const dotCount = (strValue.match(/\./g) || []).length;
+    if (dotCount > 1) return new Castium(defaultValue ?? (null as D));
+    const newValue = Number(strValue);
     return new Castium(
       isNaN(newValue) ? defaultValue ?? (null as D) : newValue
     );

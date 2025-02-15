@@ -39,6 +39,14 @@ Converts the value to a number.
 c("42").number().get(); // 42
 c("abc").number().get(); // null
 c("abc").number(0).get(); // 0 (default value provided)
+c("۱۲۳").number().get(); // 123
+c("٣٤٥.٧").number().get(); // 345.7
+c("1,200 تومان").number().get(); // 1200
+c("text").number(0).get(); // 0 (default value provided)
+c("  ٥٠٠٠  ").number().get(); // 5000
+c("۴۲.۵۶").number().get(); // 42.56
+c("12.34.56").number().get(); // null (default value provided)
+c("۳٫۱۴۱۵۹").number().get(); // 3.14159
 ```
 
 ---
