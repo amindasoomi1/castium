@@ -13,6 +13,8 @@ class Castium<T> {
     strValue = strValue.replace(/[^0-9.]/g, "");
     const dotCount = (strValue.match(/\./g) || []).length;
     if (dotCount > 1) return new Castium(defaultValue ?? (null as D));
+    if (strValue === "" || strValue === null || strValue === undefined)
+      return new Castium(defaultValue ?? (null as D));
     const newValue = Number(strValue);
     return new Castium(
       isNaN(newValue) ? defaultValue ?? (null as D) : newValue
