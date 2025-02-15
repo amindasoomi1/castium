@@ -16,15 +16,14 @@ class Castium<T> {
   }
 
   string(): Castium<string> {
-    return new Castium(String(this.value ?? "").trim());
+    if (this.value === null || this.value === undefined) return new Castium("");
+    if (typeof this.value === "object")
+      return new Castium(JSON.stringify(this.value));
+    return new Castium(String(this.value).trim());
   }
 
   boolean(): Castium<boolean> {
     return new Castium(Boolean(this.value));
-  }
-
-  equal(expected: T): Castium<boolean> {
-    return new Castium(this.value === expected);
   }
 
   isEqual(expected: T): Castium<boolean> {
@@ -32,7 +31,7 @@ class Castium<T> {
   }
 
   booleanString(): Castium<boolean | null> {
-    const str = String(this.value).toLowerCase();
+    const str = this.string().get().toLowerCase();
     if (str === "true") return new Castium(true);
     if (str === "false") return new Castium(false);
     return new Castium(null);
@@ -74,10 +73,9 @@ class Castium<T> {
   }
 
   array(): Castium<any[] | null> {
+    if (Array.isArray(this.value)) return new Castium(this.value);
     try {
-      const parsed = Array.isArray(this.value)
-        ? this.value
-        : JSON.parse(String(this.value));
+      const parsed = JSON.parse(this.string().get());
       return new Castium(Array.isArray(parsed) ? parsed : null);
     } catch {
       return new Castium(null);
@@ -85,13 +83,19 @@ class Castium<T> {
   }
 
   object(): Castium<object | null> {
+    if (
+      typeof this.value === "object" &&
+      !Array.isArray(this.value) &&
+      this.value !== null
+    ) {
+      return new Castium(this.value);
+    }
     try {
-      const parsed =
-        typeof this.value === "object"
-          ? this.value
-          : JSON.parse(String(this.value));
+      const parsed = JSON.parse(this.string().get());
       return new Castium(
-        Array.isArray(parsed) || parsed === null ? null : parsed
+        typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)
+          ? parsed
+          : null
       );
     } catch {
       return new Castium(null);
@@ -120,12 +124,36 @@ class Castium<T> {
     );
   }
 
-  transform<U>(fn: (value: T) => U): Castium<U> {
+  transform<U>(fn: (value: T) => U, defaultValue?: U): Castium<U | null> {
     try {
       return new Castium(fn(this.value));
     } catch {
-      return new Castium(null as any);
+      return new Castium(defaultValue ?? null);
     }
+  }
+
+  json(): Castium<object | null> {
+    try {
+      return new Castium(JSON.parse(this.string().get()));
+    } catch {
+      return new Castium(null);
+    }
+  }
+
+  match(regex: RegExp): Castium<boolean> {
+    const str = this.string().get();
+    return new Castium(regex.test(str));
+  }
+
+  oneOf(...values: (T | T[])[]): Castium<boolean> {
+    const validValues = values.flat();
+    return new Castium(validValues.includes(this.value));
+  }
+
+  clamp(min: number, max: number): Castium<number> {
+    const num = this.number().get();
+    if (num === null) return new Castium(min);
+    return new Castium(Math.min(Math.max(num, min), max));
   }
 
   get(): T {
