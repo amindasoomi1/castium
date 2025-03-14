@@ -159,6 +159,14 @@ class Castium<T> {
     return new Castium(Math.min(Math.max(num, min), max));
   }
 
+  enum<E>(enumObj: Record<string, E>) {
+    const values = Object.values(enumObj);
+    // @ts-ignore
+    const value = this.get() as E;
+    const includes = values.includes(value);
+    return new Castium((includes ? value : null) as Exclude<E | null, string>);
+  }
+
   get(): T {
     return this.value;
   }
