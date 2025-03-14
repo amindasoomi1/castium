@@ -2,7 +2,7 @@
   "private": false,
   "name": "castium",
   "description": "A lightweight and chainable utility for effortless data type conversation in JavaScript and Node.js",
-  "version": "1.0.20",
+  "version": "1.0.22",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -16,6 +16,7 @@
     "build": "tsup"
   },
   "keywords": [
+    "castium",
     "data-transformation",
     "type-conversion",
     "cast",
