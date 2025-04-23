@@ -120,10 +120,12 @@ class Castium<T> {
     );
   }
 
-  default<U>(defaultValue: U): Castium<U | Exclude<T, null>> {
+  default<U>(defaultValue: U): Castium<U | Exclude<T, null | undefined>> {
     const value = this.get();
     return new Castium(
-      value === null ? defaultValue : (value as Exclude<T, null>)
+      value === null || value === undefined
+        ? defaultValue
+        : (value as Exclude<T, null | undefined>)
     );
   }
 
