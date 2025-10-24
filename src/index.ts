@@ -8,13 +8,18 @@ class Castium<T> {
   number<D extends number | null>(defaultValue?: D): Castium<number | D> {
     let strValue = this.string().get();
     strValue = strValue
-      .replace(/[٠١٢٣٤٥٦٧٨٩]/g, (d) => String(d.charCodeAt(0) - 1632))
-      .replace(/[۰۱۲۳۴۵۶۷۸۹]/g, (d) => String(d.charCodeAt(0) - 1776));
-    strValue = strValue.replace(/[^0-9.]/g, "");
-    const dotCount = (strValue.match(/\./g) || []).length;
-    if (dotCount > 1) return new Castium(defaultValue ?? (null as D));
-    if (strValue === "" || strValue === null || strValue === undefined)
+      .replace(/[۰۱۲۳۴۵۶۷۸۹۰۱۲۳٤٥٦۷۸۹]/g, (d) => String(d.charCodeAt(0) & 0x0f))
+      .replace(/[^0-9.-]/g, "");
+
+    if (
+      strValue.indexOf(".") !== strValue.lastIndexOf(".") ||
+      strValue === "" ||
+      strValue === null ||
+      strValue === undefined
+    ) {
       return new Castium(defaultValue ?? (null as D));
+    }
+
     const newValue = Number(strValue);
     return new Castium(
       isNaN(newValue) ? defaultValue ?? (null as D) : newValue
@@ -80,12 +85,16 @@ class Castium<T> {
 
   array(): Castium<any[] | null> {
     if (Array.isArray(this.value)) return new Castium(this.value);
-    try {
-      const parsed = JSON.parse(this.string().get());
-      return new Castium(Array.isArray(parsed) ? parsed : null);
-    } catch {
-      return new Castium(null);
+    if (typeof this.value === "string") {
+      try {
+        const parsed = JSON.parse(this.value);
+        return new Castium(Array.isArray(parsed) ? parsed : null);
+      } catch {
+        return new Castium(null);
+      }
     }
+    // If not an array and not a string that can be parsed into an array, return null
+    return new Castium(null);
   }
 
   object(): Castium<object | null> {
@@ -96,16 +105,22 @@ class Castium<T> {
     ) {
       return new Castium(this.value);
     }
-    try {
-      const parsed = JSON.parse(this.string().get());
-      return new Castium(
-        typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)
-          ? parsed
-          : null
-      );
-    } catch {
-      return new Castium(null);
+    if (typeof this.value === "string") {
+      try {
+        const parsed = JSON.parse(this.value);
+        return new Castium(
+          typeof parsed === "object" &&
+          parsed !== null &&
+          !Array.isArray(parsed)
+            ? parsed
+            : null
+        );
+      } catch {
+        return new Castium(null);
+      }
     }
+    // If not an object and not a string that can be parsed into an object, return null
+    return new Castium(null);
   }
 
   nullable(): Castium<T | null> {
@@ -161,12 +176,11 @@ class Castium<T> {
     return new Castium(Math.min(Math.max(num, min), max));
   }
 
-  enum<E>(enumObj: Record<string, E>) {
+  enum<E>(enumObj: Record<string, E>): Castium<E | null> {
     const values = Object.values(enumObj);
-    // @ts-ignore
-    const value = this.get() as E;
+    const value = this.get() as unknown as E;
     const includes = values.includes(value);
-    return new Castium((includes ? value : null) as Exclude<E | null, string>);
+    return new Castium(includes ? value : null);
   }
 
   get(): T {

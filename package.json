@@ -2,7 +2,7 @@
   "private": false,
   "name": "castium",
   "description": "A lightweight and chainable utility for effortless data type conversation in JavaScript and Node.js",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -13,7 +13,8 @@
     "url": "https://github.com/amindasoomi1/castium"
   },
   "scripts": {
-    "build": "tsup"
+    "build": "tsup",
+    "release": "npm run build && npm version patch --no-git-tag-version --no-commit-hooks && npm publish"
   },
   "keywords": [
     "castium",
