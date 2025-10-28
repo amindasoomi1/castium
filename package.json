@@ -2,15 +2,12 @@
   "private": false,
   "name": "castium",
   "description": "A lightweight and chainable utility for effortless data type conversation in JavaScript and Node.js",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "publishConfig": {
     "access": "public"
-  },
-  "repository": {
-    "url": "https://github.com/amindasoomi1/castium"
   },
   "scripts": {
     "build": "tsup",
@@ -34,10 +31,14 @@
     "default-value",
     "date-formatting"
   ],
-  "author": "amin-dasoomi",
   "license": "MIT",
   "devDependencies": {
     "tsup": "^8.3.6",
     "typescript": "^5.7.3"
+  },
+  "author": "Amin Dasoomi",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amindasoomi1/castium.git"
   }
 }
