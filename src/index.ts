@@ -22,7 +22,7 @@ class Castium<T> {
 
     const newValue = Number(strValue);
     return new Castium(
-      isNaN(newValue) ? defaultValue ?? (null as D) : newValue
+      isNaN(newValue) ? (defaultValue ?? (null as D)) : newValue,
     );
   }
 
@@ -93,7 +93,6 @@ class Castium<T> {
         return new Castium(null);
       }
     }
-    // If not an array and not a string that can be parsed into an array, return null
     return new Castium(null);
   }
 
@@ -110,28 +109,27 @@ class Castium<T> {
         const parsed = JSON.parse(this.value);
         return new Castium(
           typeof parsed === "object" &&
-          parsed !== null &&
-          !Array.isArray(parsed)
+            parsed !== null &&
+            !Array.isArray(parsed)
             ? parsed
-            : null
+            : null,
         );
       } catch {
         return new Castium(null);
       }
     }
-    // If not an object and not a string that can be parsed into an object, return null
     return new Castium(null);
   }
 
   nullable(): Castium<T | null> {
     return new Castium(
-      this.value === "" || this.value === undefined ? null : this.value
+      this.value === "" || this.value === undefined ? null : this.value,
     );
   }
 
   undefined(): Castium<T | undefined> {
     return new Castium(
-      this.value === "" || this.value === null ? undefined : this.value
+      this.value === "" || this.value === null ? undefined : this.value,
     );
   }
 
@@ -140,7 +138,7 @@ class Castium<T> {
     return new Castium(
       value === null || value === undefined
         ? defaultValue
-        : (value as Exclude<T, null | undefined>)
+        : (value as Exclude<T, null | undefined>),
     );
   }
 
@@ -152,7 +150,7 @@ class Castium<T> {
     }
   }
 
-  json(): Castium<object | null> {
+  json<R extends object>(): Castium<R | null> {
     try {
       return new Castium(JSON.parse(this.string().get()));
     } catch {
@@ -181,6 +179,38 @@ class Castium<T> {
     const value = this.get() as unknown as E;
     const includes = values.includes(value);
     return new Castium(includes ? value : null);
+  }
+
+  shape<R extends Record<string, unknown>>(schema: {
+    // @ts-ignore
+    [K in keyof R]: ((value: T[K]) => Castium<R[K]>) | R[K];
+  }) {
+    const source = this.object().default({}).get() as Record<string, unknown>;
+    const result = {} as R;
+
+    for (const key in schema) {
+      const rule = schema[key];
+      const isFunction = typeof rule === "function";
+      if (isFunction) {
+        try {
+          result[key] = rule(source[key]).get();
+        } catch (error) {
+          console.warn("Castium: ", error);
+          result[key] = null as any;
+        }
+      } else {
+        // @ts-expect-error
+        result[key] = rule;
+      }
+    }
+
+    return new Castium(result);
+  }
+
+  if(bool: boolean | ((value: T) => boolean)): Castium<T | null> {
+    const result = typeof bool === "function" ? bool(this.value) : bool;
+    if (result) return new Castium(this.value);
+    else return new Castium(null);
   }
 
   get(): T {
