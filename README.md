@@ -279,7 +279,7 @@ const result = c(data)
 c("25").number().when(false).get(); // null
 ```
 
-### With
+### when((value:T) => boolean)
 
 ```ts
 c("25")
