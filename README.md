@@ -25,27 +25,36 @@ const result = c("0  ").string().number().boolean().get();
 console.log(result); // false
 ```
 
+---
+
+## Philosophy
+
+- ❌ No throwing errors
+- ✅ Always returns a predictable value
+- 🔗 Fully chainable
+- 🧠 Value-first (not schema-first)
+
+---
+
 ### API Methods
 
 Below is a list of available methods in **Castium**, along with examples:
 
 ---
 
-### `.number(defaultValue?)`
+### `.number()`
 
 Converts the value to a number.
 
 ```ts
 c("42").number().get(); // 42
 c("abc").number().get(); // null
-c("abc").number(0).get(); // 0 (default value provided)
 c("۱۲۳").number().get(); // 123
 c("٣٤٥.٧").number().get(); // 345.7
 c("1,200 تومان").number().get(); // 1200
-c("text").number(0).get(); // 0 (default value provided)
 c("  ٥٠٠٠  ").number().get(); // 5000
 c("۴۲.۵۶").number().get(); // 42.56
-c("12.34.56").number().get(); // null (default value provided)
+c("12.34.56").number().get(); // null
 ```
 
 ---
@@ -248,6 +257,36 @@ c(20).clamp(1, 10).get(); // 10
 ```
 
 ---
+
+## 🆕 shape()
+
+```ts
+const result = c(data)
+  .shape({
+    id: (v) => c(v).number(),
+    name: (v) => c(v).string(),
+    active: (v) => c(v).booleanString(),
+    role: "user",
+  })
+  .get();
+```
+
+---
+
+## 🆕 when()
+
+```ts
+c("25").number().when(false).get(); // null
+```
+
+### With
+
+```ts
+c("25")
+  .number()
+  .when((v) => v !== null && v > 18)
+  .get(); // 25
+```
 
 ## Conclusion
 

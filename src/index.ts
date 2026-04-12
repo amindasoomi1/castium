@@ -1,3 +1,5 @@
+import log from "./log";
+
 class Castium<T> {
   private value: T;
 
@@ -5,7 +7,7 @@ class Castium<T> {
     this.value = value;
   }
 
-  number<D extends number | null>(defaultValue?: D): Castium<number | D> {
+  number(): Castium<number | null> {
     let strValue = this.string().get();
     strValue = strValue
       .replace(/[۰۱۲۳۴۵۶۷۸۹۰۱۲۳٤٥٦۷۸۹]/g, (d) => String(d.charCodeAt(0) & 0x0f))
@@ -17,13 +19,11 @@ class Castium<T> {
       strValue === null ||
       strValue === undefined
     ) {
-      return new Castium(defaultValue ?? (null as D));
+      return new Castium(null);
     }
 
     const newValue = Number(strValue);
-    return new Castium(
-      isNaN(newValue) ? (defaultValue ?? (null as D)) : newValue,
-    );
+    return new Castium(isNaN(newValue) ? null : newValue);
   }
 
   string(): Castium<string> {
@@ -195,7 +195,7 @@ class Castium<T> {
         try {
           result[key] = rule(source[key]).get();
         } catch (error) {
-          console.warn("Castium: ", error);
+          log(error);
           result[key] = null as any;
         }
       } else {
@@ -207,10 +207,16 @@ class Castium<T> {
     return new Castium(result);
   }
 
-  if(bool: boolean | ((value: T) => boolean)): Castium<T | null> {
-    const result = typeof bool === "function" ? bool(this.value) : bool;
-    if (result) return new Castium(this.value);
-    else return new Castium(null);
+  when(predicate: boolean | ((value: T) => boolean)): Castium<T | null> {
+    try {
+      const result =
+        typeof predicate === "function" ? predicate(this.value) : predicate;
+      if (result) return new Castium(this.value);
+      else return new Castium(null);
+    } catch (error) {
+      log(error);
+      return new Castium(null);
+    }
   }
 
   get(): T {
