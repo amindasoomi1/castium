@@ -261,19 +261,20 @@ c(20).clamp(1, 10).get(); // 10
 ## 🆕 shape()
 
 ```ts
+const data = { id: "5", name: "John Doe     ", active: true };
 const result = c(data)
   .shape({
-    id: (v) => c(v).number(),
-    name: (v) => c(v).string(),
-    active: (v) => c(v).booleanString(),
+    id: (v) => c(v).number().get(),
+    name: (v) => c(v).string().get(),
+    active: (v) => v,
     role: "user",
   })
-  .get();
+  .get(); // { id: 5, name: "John Doe", active: true, role: "user" }
 ```
 
 ---
 
-## 🆕 when()
+## 🆕 when(boolean)
 
 ```ts
 c("25").number().when(false).get(); // null

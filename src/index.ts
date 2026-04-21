@@ -183,7 +183,7 @@ class Castium<T> {
 
   shape<R extends Record<string, unknown>>(schema: {
     // @ts-ignore
-    [K in keyof R]: ((value: T[K]) => Castium<R[K]>) | R[K];
+    [K in keyof R]: ((value: T[K]) => R[K]) | R[K];
   }) {
     const source = this.object().default({}).get() as Record<string, unknown>;
     const result = {} as R;
@@ -193,7 +193,7 @@ class Castium<T> {
       const isFunction = typeof rule === "function";
       if (isFunction) {
         try {
-          result[key] = rule(source[key]).get();
+          result[key] = rule(source[key]);
         } catch (error) {
           log(error);
           result[key] = null as any;
