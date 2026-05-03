@@ -142,11 +142,14 @@ class Castium<T> {
     );
   }
 
-  transform<U>(fn: (value: T) => U, defaultValue?: U): Castium<U | null> {
+  transform<U, D = null>(
+    fn: (value: T) => U,
+    defaultValue?: D,
+  ): Castium<U | D> {
     try {
       return new Castium(fn(this.value));
     } catch {
-      return new Castium(defaultValue ?? null);
+      return new Castium((defaultValue ?? null) as D);
     }
   }
 
